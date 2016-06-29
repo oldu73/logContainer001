@@ -1,10 +1,11 @@
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
-import java.io.FileInputStream;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Properties;
+
 
 public class Container {
 
@@ -15,6 +16,24 @@ public class Container {
         components = new HashMap<>();
 
         try {
+
+            final Configuration config = new PropertiesConfiguration("components.properties");
+
+            // The property file is not read in the correct order (code comments below)
+            // Good implementation follow, which use Apache Commons Configuration
+            // SRC:
+            // - http://commons.apache.org/proper/commons-configuration/
+            // - http://wilddiary.com/reading-property-file-java-using-apache-commons-configuration/
+            // - http://www.jmdoudoux.fr/java/dej/chap-apache_commons.htm
+
+            Iterator<String> keys = config.getKeys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = (String) config.getProperty(key);
+                processEntry(key, value);
+            }
+
+            /*
             Properties properties = new Properties();
             properties.load(new FileInputStream("src\\main\\resources\\components.properties"));
             for (Map.Entry entry : properties.entrySet()) {
@@ -22,6 +41,7 @@ public class Container {
                 String value = (String) entry.getValue();
                 processEntry(key, value);
             }
+            */
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
