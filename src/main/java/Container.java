@@ -17,21 +17,7 @@ public class Container {
 
         try {
 
-            final Configuration config = new PropertiesConfiguration("components.properties");
-
             // The property file is not read in the correct order (code comments below)
-            // Good implementation follow, which use Apache Commons Configuration
-            // SRC:
-            // - http://commons.apache.org/proper/commons-configuration/
-            // - http://wilddiary.com/reading-property-file-java-using-apache-commons-configuration/
-            // - http://www.jmdoudoux.fr/java/dej/chap-apache_commons.htm
-
-            Iterator<String> keys = config.getKeys();
-            while (keys.hasNext()) {
-                String key = keys.next();
-                String value = (String) config.getProperty(key);
-                processEntry(key, value);
-            }
 
             /*
             Properties properties = new Properties();
@@ -42,6 +28,23 @@ public class Container {
                 processEntry(key, value);
             }
             */
+
+            // Good implementation follow, which use Apache Commons Configuration
+            // SRC:
+            // - http://stackoverflow.com/questions/1312383/pulling-values-from-a-java-properties-file-in-order
+            // - http://commons.apache.org/proper/commons-configuration/
+            // - http://wilddiary.com/reading-property-file-java-using-apache-commons-configuration/
+            // - http://www.jmdoudoux.fr/java/dej/chap-apache_commons.htm
+
+            final Configuration config = new PropertiesConfiguration("components.properties");
+
+            Iterator<String> keys = config.getKeys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = (String) config.getProperty(key);
+                processEntry(key, value);
+            }
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
